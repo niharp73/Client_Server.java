@@ -1,72 +1,97 @@
 import java.net.*;
 import java.io.*;
-public class ClientProgram {
+public class Job {
  private Socket socket;
  private BufferedReader in;
  private PrintWriter out;
- // Make a connection to the server
- private void connectToServer() {
- try {
- socket = new Socket(InetAddress.getLocalHost(), Server.SERVER_PORT);
- in = new BufferedReader(new InputStreamReader(
- socket.getInputStream()));
- out = new PrintWriter(socket.getOutputStream());
- } catch(IOException e) {
- System.out.println("CLIENT: Cannot connect to server");
- System.exit(-1);
- }
+ //Defining the funstions to be used to show up the application
+ 
+ // Make a connection to the application
+ private void connectToApp()
+ {
+    try 
+    {
+     socket = new Socket(InetAddress.getLocalHost(), App.SERVER_PORT);
+     in = new BufferedReader(new InputStreamReader(
+     socket.getInputStream()));
+     out = new PrintWriter(socket.getOutputStream());
+    } 
+    catch(IOException e)
+    {
+     System.out.println("JOB-TAKER: Cannot connect to application");
+     System.exit(-1);
+    }
  } 
-// Disconnect from the server
- private void disconnectFromServer() {
- try {
- socket.close();
- } catch(IOException e) {
- System.out.println("CLIENT: Cannot disconnect from server");
- }
- }
- // Ask the server for the current time
- private void askForTime() {
- connectToServer();
- out.println("What Time is It ?");
- out.flush();
- try {
- String time = in.readLine();
- System.out.println("CLIENT: The time is " + time);
- } catch(IOException e) {
- System.out.println("CLIENT: Cannot receive time from server");
- }
- disconnectFromServer();
- }
- // Ask the server for the number of requests obtained
- private void askForNumberOfRequests() {
- connectToServer();
- out.println("How many requests have you handled ?");
- out.flush();
- int count = 0;
- try {
- count = Integer.parseInt(in.readLine());
- } catch(IOException e) {
- System.out.println("CLIENT: Cannot receive num requests from server");
- }
- System.out.println("CLIENT: The number of requests are " + count);
- disconnectFromServer();
+ 
+// Disconnect from the application
+ private void disconnectFromApp()
+ {
+    try
+    {
+     msocket.close();
+    }
+    catch(IOException e) 
+    {
+    System.out.println("JOB-TAKER: Cannot disconnect from application");
+    }
  }
  
- private void askForApplication() {
- connectToServer();
- out.println("Please complete the application");
- out.flush();
- disconnectFromServer();
+ // Ask the job creater for the current progress in job
+ private void askForProgress() 
+ {
+    connectToApp();
+    out.println("What is the status of the job?");
+    out.flush();
+    
+    try
+    {
+    String status = in.readLine();
+    System.out.println("JOB-TAKER: The current progress is " + status);
+    } 
+    catch(IOException e)
+    {
+    System.out.println("JOB-TAKER: Cannot receive status from the application");
+    }
+    disconnectFromApp();
  }
- private static void Delay() {
- try{Thread.sleep(3000);}catch(InterruptedException e){}
+ 
+ // Ask the application to show up the total job postings avaialable at one time 
+ private void askForNumberOfJobs()
+ {
+     
+    connectToApp();
+    out.println("How many job are available at the moment for the JOB-SEEKER?");
+    out.flush();
+    int count = 0;
+    
+    try
+    {
+    
+    count = Integer.parseInt(in.readLine());
+    } 
+    catch(IOException e) 
+    {
+    System.out.println("JOB-SEEKER: Cannot receive count of available job postings!");
+    }
+    System.out.println("JOB-SEEKER: The count of job postings are " + count);
+    disconnectFromApp();
  }
- public static void main (String[] args) {
- ClientProgram c = new ClientProgram();
- Delay(); c.askForTime();
- Delay(); c.askForNumberOfRequests();
- Delay(); c.askForDetails();
- Delay(); c.askForTime();
- Delay(); c.askForNumberOfRequests();
+ //Ask the Job seeker to look for the other job available at the same time
+ private void askForOtherJob() 
+ {
+    connectToApp();
+    out.println("Please do the other job by swithing the existing job!");
+    out.flush();
+    disconnectFromApp();
  }
 }
+ //main function body
+ public static void main (String[] args) 
+ {
+ Job j = new Job();
+ j.connectToApp();    
+ j.askForNumberOfJobs();
+ j.askForProgress();
+ j.askForOtherJob();
+ j.disconnectFromApp();
+ }
